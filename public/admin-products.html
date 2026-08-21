@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ICCHA Admin — Manage Products</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    body{ padding: 32px 24px 60px; }
+
+    .admin-shell{ max-width: 1100px; margin: 0 auto; }
+
+    .admin-brand{
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold, #c79a5c);
+    }
+    h2{ font-size: 22px; margin: 4px 0 24px; }
+
+    button{
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 12.5px;
+      letter-spacing: 0.02em;
+      transition: .15s ease;
+    }
+
+    .back-btn{
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.16);
+      color: #fff;
+      padding: 10px 16px;
+      margin-bottom: 22px;
+    }
+    .back-btn:hover{ border-color: var(--gold, #c79a5c); color: var(--gold, #c79a5c); }
+
+    #productList{
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 900px){
+      #productList{ grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px){
+      #productList{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background: var(--card-bg, #221414);
+      border: 1px solid var(--stroke, rgba(255,255,255,0.08));
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .product-card{
+      display:flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .product-thumb img{
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .product-info strong{
+      font-size: 14.5px;
+    }
+    .product-info{
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.6;
+    }
+
+    .status-ok{ color: #4CAF50; font-weight: 600; }
+    .status-soldout{ color: #ff6b6b; font-weight: 600; }
+
+    .card-actions{
+      display:flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .card-actions button{
+      flex: 1;
+      padding: 8px 10px;
+      min-width: 80px;
+    }
+
+    .btn-edit{ background: var(--gold, #c79a5c); color: #1a1010; }
+    .btn-edit:hover{ filter: brightness(1.08); }
+
+    .btn-toggle{ background: rgba(255,255,255,0.10); color: #fff; }
+    .btn-toggle:hover{ background: rgba(255,255,255,0.16); }
+
+    .delete-btn{ background: #b0342a; color: #fff; }
+    .delete-btn:hover{ background: #c73f33; }
+
+    .pagination{
+      grid-column: 1 / -1;
+      text-align: center;
+      margin-top: 20px;
+    }
+    .pagination button{
+      margin: 4px;
+      padding: 8px 14px;
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .pagination button.active{
+      background: var(--gold, #c79a5c);
+      color: #1a1010;
+      border-color: var(--gold, #c79a5c);
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="admin-shell">
+
+  <button class="back-btn" onclick="window.location.href='admin.html'">
+    ← Back to Admin
+  </button>
+
+  <span class="admin-brand">ICCHA Admin</span>
+  <h2>Manage Products</h2>
+
+  <div id="productList"></div>
+
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/admin.js"></script>
+<script>
+let allProducts = [];
+let currentPage = 1;
+const productsPerPage = 30; // 3 × 10 rows
+
+async function loadProducts() {
+  const res = await fetch(API + "/api/products");
+  allProducts = await res.json();
+  renderProducts();
+}
+
+function renderProducts() {
+  const container = document.getElementById("productList");
+  container.innerHTML = "";
+
+  const start = (currentPage - 1) * productsPerPage;
+  const end = start + productsPerPage;
+  const paginatedProducts = allProducts.slice(start, end);
+
+  paginatedProducts.forEach(p => {
+
+    const img = p.images?.[0] || "https://via.placeholder.com/300x200";
+
+    container.innerHTML += `
+      <div class="card product-card">
+
+        <div class="product-thumb">
+          <img src="${img}" alt="${p.name || ''}">
+        </div>
+
+        <div class="product-info">
+          <strong>${p.name}</strong><br>
+          MRP: ₹${p.mrp || "-"}<br>
+          Offer: ₹${p.offerPrice || "-"}<br>
+          Status:
+          <span class="${p.soldOut ? 'status-soldout' : 'status-ok'}">
+            ${p.soldOut ? "Sold Out" : "Available"}
+          </span>
+        </div>
+
+        <div class="card-actions">
+          <button class="btn-edit" onclick="editProduct('${p.id}')">Edit</button>
+          <button class="btn-toggle" onclick="toggleSold('${p.id}', ${p.soldOut})">
+            ${p.soldOut ? "Mark Available" : "Mark Sold Out"}
+          </button>
+          <button class="delete-btn" onclick="deleteProduct('${p.id}')">
+            Delete
+          </button>
+        </div>
+
+      </div>
+    `;
+  });
+
+  renderPagination();
+}
+
+function renderPagination() {
+  const totalPages = Math.ceil(allProducts.length / productsPerPage);
+  if (totalPages <= 1) return;
+
+  let paginationHTML = `<div class="pagination">`;
+
+  for (let i = 1; i <= totalPages; i++) {
+    paginationHTML += `
+      <button
+        class="${i === currentPage ? 'active' : ''}"
+        onclick="goToPage(${i})">
+        ${i}
+      </button>
+    `;
+  }
+
+  paginationHTML += `</div>`;
+
+  document.getElementById("productList").insertAdjacentHTML("beforeend", paginationHTML);
+}
+
+function goToPage(page) {
+  currentPage = page;
+  renderProducts();
+}
+
+function editProduct(id) {
+  window.location.href = `admin-edit.html?id=${id}`;
+}
+
+loadProducts();
+</script>
+
+</body>
+</html>
