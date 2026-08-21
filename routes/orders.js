@@ -54,6 +54,12 @@ router.post("/", async (req, res) => {
 // after payment is verified below, so unpaid attempts never appear as orders.
 router.post("/razorpay/create", async (req, res) => {
   try {
+    if (!razorpay) {
+      return res.status(503).json({
+        error: "Online payments aren't set up yet. Please choose Cash on Delivery instead.",
+      });
+    }
+
     const error = validateCustomerDetails(req.body);
     if (error) return res.status(400).json({ error });
 
@@ -82,6 +88,12 @@ router.post("/razorpay/create", async (req, res) => {
 // (via signature check) before saving the order as paid.
 router.post("/razorpay/verify", async (req, res) => {
   try {
+    if (!razorpay) {
+      return res.status(503).json({
+        error: "Online payments aren't set up yet. Please choose Cash on Delivery instead.",
+      });
+    }
+
     const {
       razorpay_order_id,
       razorpay_payment_id,
