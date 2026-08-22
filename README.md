@@ -76,7 +76,7 @@ security fix — your originals won't work with this backend):
 `public_admin_edit_source.html`, and `public_admin-orders.html` and change
 this line in each to a password only you know:
 ```js
-const ADMIN_KEY = "CHANGE_ME_TO_MATCH_YOUR_BACKEND_ENV";
+const ADMIN_KEY = "KUNJAPPI@20";
 ```
 Use the **exact same value** for `ADMIN_KEY` in your `.env` file (Step 2).
 
