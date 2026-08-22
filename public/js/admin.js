@@ -2,7 +2,7 @@ const API = typeof API_BASE !== "undefined" ? API_BASE : "";
 
 // Must match the ADMIN_KEY environment variable set on your backend (Render).
 // This gates who can add/edit/delete products through this panel.
-const ADMIN_KEY = "CHANGE_ME_TO_MATCH_YOUR_BACKEND_ENV";
+const ADMIN_KEY = "KUNJAPPI@20";
 
 let selectedSizes = new Set();
 
