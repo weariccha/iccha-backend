@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy | ICCHA</title>
+  <style>
+   :root{
+  --bg: #0b0c0f;
+  --bg-2: #101218;
+  --text: #ffffff;
+  --muted: rgba(255,255,255,.72);
+  --line: rgba(255,255,255,.10);
+
+  --brand: #ff2525;
+  --brand-ink: #0b0c0f;
+
+  --radius: 16px;
+  --radius-pill: 999px;
+  --shadow: 0 16px 40px rgba(0,0,0,.45);
+
+  --container: 1200px;
+  --gutter: 20px; /* same as 40px total in .container calc(100% - 40px) */
+
+  --accent:#ff2a2a;
+  --card:rgba(255,255,255,0.04);
+  --stroke:rgba(255,255,255,0.08);
+
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  padding: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+img{ max-width:100%; display:block; }
+
+.site-header{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(247, 241, 232, 0.96);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0,0,0,.08);
+}
+.header-inner{
+  height: 76px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  text-decoration:none;
+  color:var(--text);
+}
+.brand-text{
+  font-weight: 900;
+  letter-spacing: .08em;
+  font-size: 18px;
+}
+.brand-logo{
+  height: 56px;
+  width: auto;
+  max-width: none;
+  display: block;
+}
+
+.container{
+  width: min(var(--container), calc(100% - 40px));
+  margin-inline:auto;
+}
+  /* =========================
+   LEGAL PAGES (Consumer Rights / Disclaimer / Privacy Policy)
+   ========================= */
+
+.legal-page {
+  padding: 0;
+}
+
+.legal-hero {
+ /* padding: 28px 0 26px; */
+ padding: 0;
+  margin-bottom: 26px;
+}
+
+.legal-hero h1 {
+  font-size: clamp(30px, 4vw, 48px);
+  line-height: 1.05;
+  margin: 0 0 10px;
+  letter-spacing: -0.02em;
+}
+
+.legal-hero .sub {
+  margin: 0;
+  color: rgba(255,255,255,0.78);
+  max-width: 820px;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.legal-shell {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 22px;
+  align-items: start;
+}
+
+.legal-toc {
+  position: sticky;
+  top: 92px; /* adjust based on your header height */
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.legal-toc h3 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+}
+
+.legal-toc a {
+  display: block;
+  padding: 10px 10px;
+  margin: 6px 0;
+  border-radius: 12px;
+  color: rgba(255,255,255,0.82);
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: 0.2s ease;
+}
+
+.legal-toc a:hover {
+  background: rgba(255, 0, 0, 0.08);
+  border-color: rgba(255, 0, 0, 0.18);
+  color: #fff;
+}
+
+.legal-content {
+  min-width: 0;
+}
+
+.legal-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 22px;
+  padding: 18px 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 18px 55px rgba(0,0,0,0.35);
+  /* Fix anchor jump under fixed header */
+  scroll-margin-top: 140px; /* adjust to your header height */
+
+}
+
+.legal-card h2 {
+  margin: 0 0 10px;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+.legal-card p {
+  margin: 0 0 12px;
+  color: rgba(255,255,255,0.78);
+  line-height: 1.75;
+}
+
+.legal-card ul {
+  margin: 0;
+  padding-left: 18px;
+  color: rgba(255,255,255,0.78);
+  line-height: 1.75;
+}
+
+.legal-chip {
+  display: inline-block;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  color: rgba(255,255,255,0.9);
+  margin-bottom: 10px;
+}
+
+.legal-note {
+  font-size: 13px;
+  color: rgba(255,255,255,0.65);
+  margin-top: 10px;
+}
+
+/* mobile */
+@media (max-width: 900px) {
+  .legal-shell {
+    grid-template-columns: 1fr;
+  }
+  .legal-toc {
+    position: relative;
+    top: auto;
+  }
+}
+</style>
+</head>
+<body>
+
+  <!-- header... -->
+   <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="ICCHA Home">
+        <img src="images/logo.png" alt="ICCHA" class="brand-logo" /> 
+      </a>
+    </div>
+  </header>
+
+  <main class="legal-page">
+    <div class="container">
+      <div class="legal-hero">
+        <h1>Privacy Policy</h1>
+        <p class="sub">
+          This Privacy Policy applies to ICCHA during its pre-launch phase and will be updated once the brand is formally registered.
+        </p>
+      </div>
+
+      <div class="legal-shell">
+        <aside class="legal-toc">
+          <h3>On this page</h3>
+          <a href="#collect">Information We Collect</a>
+          <a href="#use">How We Use It</a>
+          <a href="#protection">Data Protection</a>
+          <a href="#unsubscribe">Unsubscribe</a>
+          <a href="#contact">Contact</a>
+        </aside>
+
+        <article class="legal-content">
+          <section id="collect" class="legal-card">
+            <h2>Information We Collect</h2>
+            <p>
+              We may collect personal information such as email addresses when users voluntarily sign up for updates,
+              early access notifications, or newsletters.
+            </p>
+          </section>
+
+          <section id="use" class="legal-card">
+            <h2>How We Use Your Information</h2>
+            <p>Collected information is used solely to:</p>
+            <ul>
+              <li>Share product launch updates</li>
+              <li>Provide early access notifications</li>
+              <li>Send relevant brand communications</li>
+            </ul>
+          </section>
+
+          <section id="protection" class="legal-card">
+            <h2>Data Protection</h2>
+            <p>
+              We do not sell, trade, or share personal information with third parties.
+              Data is handled responsibly and used only for the purposes stated above.
+            </p>
+          </section>
+
+          <section id="unsubscribe" class="legal-card">
+            <h2>Unsubscribe</h2>
+            <p>
+              You may unsubscribe at any time using the link provided in our emails.
+            </p>
+          </section>
+
+          <section id="contact" class="legal-card">
+            <h2>Contact</h2>
+            <p>
+              For privacy-related questions, contact: <strong>privacy@theiccha.com</strong>
+              <br>(Replace this email when your official email is ready.)
+            </p>
+          </section>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <!-- footer... -->
+
+</body>
+</html>
