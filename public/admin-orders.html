@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ICCHA Admin — Orders</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    body{ padding: 32px 24px 60px; }
+
+    .admin-shell{ max-width: 1100px; margin: 0 auto; }
+
+    .admin-brand{
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold, #c79a5c);
+    }
+    h2{ font-size: 22px; margin: 4px 0 24px; }
+
+    .back-btn{
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 10px;
+      color: #fff;
+      padding: 10px 16px;
+      margin-bottom: 22px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 12.5px;
+      transition: .15s ease;
+    }
+    .back-btn:hover{ border-color: var(--gold, #c79a5c); color: var(--gold, #c79a5c); }
+
+    .orders-card{
+      background: var(--card-bg, #221414);
+      border: 1px solid var(--stroke, rgba(255,255,255,0.08));
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    table{
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td{
+      text-align: left;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 13.5px;
+      vertical-align: top;
+    }
+    th{
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+    }
+    tr:last-child td{ border-bottom: none; }
+
+    .badge{
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: capitalize;
+    }
+    .badge.paid{ background: rgba(76,175,80,0.15); color: #6fcf76; }
+    .badge.pending{ background: rgba(199,154,92,0.15); color: var(--gold, #c79a5c); }
+    .badge.failed{ background: rgba(176,52,42,0.18); color: #ff8a80; }
+
+    select{
+      width: auto;
+      background: rgba(255,255,255,0.045);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.10);
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+    }
+    select:focus{ border-color: var(--gold, #c79a5c); }
+    select option{
+      background: #221414;
+      color: #fff;
+    }
+
+    .items-list{ font-size: 12.5px; color: rgba(255,255,255,0.65); }
+    .items-list div{ margin-bottom: 4px; }
+
+    .empty{
+      color: rgba(255,255,255,0.5);
+      padding: 60px 0;
+      text-align: center;
+    }
+
+    .customer-name{ font-weight: 600; }
+    .customer-sub{ color: rgba(255,255,255,0.5); font-size: 12.5px; }
+  </style>
+</head>
+<body>
+
+<div class="admin-shell">
+
+  <button class="back-btn" onclick="window.location.href='admin.html'">
+    ← Back to Admin
+  </button>
+
+  <span class="admin-brand">ICCHA Admin</span>
+  <h2>Orders</h2>
+
+  <div class="orders-card">
+    <div id="ordersWrap" style="padding: 20px;">Loading…</div>
+  </div>
+
+</div>
+
+<script src="js/config.js"></script>
+<script>
+  const API = typeof API_BASE !== "undefined" ? API_BASE : "";
+
+  // Must match the ADMIN_KEY environment variable set on your backend (Render).
+  const ADMIN_KEY = "KUNJAPPI@20";
+
+  async function loadOrders() {
+    const wrap = document.getElementById("ordersWrap");
+    try {
+      const res = await fetch(API + "/api/orders", {
+        headers: { "x-admin-key": ADMIN_KEY }
+      });
+      if (!res.ok) throw new Error("Failed to load orders");
+      const orders = await res.json();
+      renderOrders(orders);
+    } catch (err) {
+      wrap.innerHTML = `<p class="empty">Could not load orders: ${err.message}</p>`;
+    }
+  }
+
+  function renderOrders(orders) {
+    const wrap = document.getElementById("ordersWrap");
+
+    if (!orders.length) {
+      wrap.innerHTML = `<p class="empty">No orders yet.</p>`;
+      return;
+    }
+
+    let html = `
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Customer</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Payment</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    orders.forEach(o => {
+      const date = new Date(o.createdAt).toLocaleString();
+      const itemsHtml = o.items.map(it =>
+        `<div>${it.qty}× ${it.name}${it.size ? " (" + it.size + ")" : ""}</div>`
+      ).join("");
+
+      html += `
+        <tr>
+          <td>${date}</td>
+          <td>
+            <div class="customer-name">${o.customerName}</div>
+            <div class="customer-sub">${o.phone}</div>
+            <div class="customer-sub">${o.address}</div>
+          </td>
+          <td class="items-list">${itemsHtml}</td>
+          <td>₹${o.total}</td>
+          <td>
+            ${o.paymentMethod.toUpperCase()}<br>
+            <span class="badge ${o.paymentStatus}">${o.paymentStatus}</span>
+          </td>
+          <td>
+            <select onchange="updateStatus('${o.id || o._id}', this.value)">
+              ${["received","processing","shipped","delivered","cancelled"].map(s =>
+                `<option value="${s}" ${o.orderStatus === s ? "selected" : ""}>${s}</option>`
+              ).join("")}
+            </select>
+          </td>
+        </tr>
+      `;
+    });
+
+    html += `</tbody></table>`;
+    wrap.innerHTML = html;
+  }
+
+  async function updateStatus(id, orderStatus) {
+    try {
+      await fetch(API + "/api/orders/" + id, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-key": ADMIN_KEY
+        },
+        body: JSON.stringify({ orderStatus })
+      });
+    } catch (err) {
+      alert("Could not update order status");
+    }
+  }
+
+  loadOrders();
+</script>
+
+</body>
+</html>
