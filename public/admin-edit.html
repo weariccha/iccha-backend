@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ICCHA Admin — Edit Product</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    body{ padding: 32px 24px 60px; }
+
+    .admin-shell{ max-width: 640px; margin: 0 auto; }
+
+    .admin-brand{
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold, #c79a5c);
+    }
+    h1{ font-size: 22px; margin: 4px 0 24px; }
+
+    .admin-card{
+      background: var(--card-bg, #221414);
+      border: 1px solid var(--stroke, rgba(255,255,255,0.08));
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    input, select, textarea{
+      width: 100%;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .15s ease, background .15s ease;
+    }
+    input:focus, select:focus, textarea:focus{
+      border-color: var(--gold, #c79a5c);
+      background: rgba(199,154,92,0.06);
+    }
+
+    /* Native dropdown popup: browsers render this with their own
+       white background, so option text needs its own dark color
+       rather than inheriting the select's white text */
+    select option{
+      background: #221414;
+      color: #fff;
+    }
+
+    /* Safety net: if admin-ui.js hasn't loaded/run for any reason,
+       this alone still prevents the native select from doubling up
+       visually next to the custom dropdown box. */
+    .custom-select + select{
+      display: none;
+    }
+
+    /* ===== Custom themed dropdown (replaces native select popup) ===== */
+    .custom-select{
+      position: relative;
+      margin-bottom: 14px;
+    }
+    .custom-select-trigger{
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: border-color .15s ease, background .15s ease;
+    }
+    .custom-select-trigger:hover,
+    .custom-select.open .custom-select-trigger{
+      border-color: var(--gold, #c79a5c);
+    }
+    .custom-select-value.placeholder{
+      color: rgba(255,255,255,0.45);
+    }
+    .custom-select-caret{
+      flex-shrink: 0;
+      opacity: 0.6;
+      transition: transform .15s ease;
+    }
+    .custom-select.open .custom-select-caret{
+      transform: rotate(180deg);
+    }
+    .custom-select-menu{
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      background: #221414;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 10px;
+      padding: 6px;
+      max-height: 260px;
+      overflow-y: auto;
+      z-index: 50;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      display: none;
+    }
+    .custom-select.open .custom-select-menu{
+      display: block;
+    }
+    .custom-select-option{
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #fff;
+      cursor: pointer;
+    }
+    .custom-select-option:hover,
+    .custom-select-option.active{
+      background: var(--gold, #c79a5c);
+      color: #1a1010;
+      font-weight: 600;
+    }
+    .custom-select-group{
+      padding: 10px 12px 4px;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+    }
+    .custom-select-group:first-child{
+      padding-top: 2px;
+    }
+    .custom-select-menu::-webkit-scrollbar{ width: 6px; }
+    .custom-select-menu::-webkit-scrollbar-thumb{
+      background: rgba(255,255,255,0.15);
+      border-radius: 6px;
+    }
+    textarea{ min-height: 90px; resize: vertical; }
+
+    button{
+      padding: 13px 18px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13.5px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      transition: .15s ease;
+    }
+
+    .update-btn{
+      width: 100%;
+      background: linear-gradient(180deg, #7a1f2b, var(--brand, #6b0015));
+      color: #fff;
+      box-shadow: 0 10px 26px rgba(107,0,21,0.35);
+    }
+    .update-btn:hover{ filter: brightness(1.08); transform: translateY(-1px); }
+
+    .back-btn{
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.16);
+      color: #fff;
+      margin-bottom: 22px;
+    }
+    .back-btn:hover{ border-color: var(--gold, #c79a5c); color: var(--gold, #c79a5c); }
+    .admin-login-overlay{
+    position: fixed;
+    inset: 0;
+    background: #150f0f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5000;
+    padding: 20px;
+  }
+  .admin-login-card{
+    width: 100%;
+    max-width: 380px;
+    background: var(--card-bg, #221414);
+    border: 1px solid var(--stroke, rgba(255,255,255,0.08));
+    border-radius: 16px;
+    padding: 28px;
+    text-align: center;
+  }
+  .admin-logout-btn{
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.16);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    float: right;
+  }
+  .admin-logout-btn:hover{ border-color: var(--gold, #c79a5c); color: var(--gold, #c79a5c); }
+  </style>
+</head>
+
+<body>
+
+
+<div id="adminLoginOverlay" class="admin-login-overlay" hidden>
+  <div class="admin-login-card">
+    <span class="admin-brand">ICCHA Admin</span>
+    <h2 style="margin:8px 0 4px;">Admin Login</h2>
+    <p class="muted small" style="margin:0 0 18px; color:rgba(255,255,255,0.55);">Sign in with your admin account to continue.</p>
+    <form id="adminLoginForm">
+      <input type="email" id="adminLoginEmail" placeholder="Email" required autocomplete="username" style="width:100%; padding:12px 14px; margin-bottom:12px; background:rgba(255,255,255,0.045); border:1px solid rgba(255,255,255,0.10); border-radius:10px; color:#fff; font-size:14px; font-family:inherit;">
+      <input type="password" id="adminLoginPassword" placeholder="Password" required autocomplete="current-password" style="width:100%; padding:12px 14px; margin-bottom:12px; background:rgba(255,255,255,0.045); border:1px solid rgba(255,255,255,0.10); border-radius:10px; color:#fff; font-size:14px; font-family:inherit;">
+      <button type="submit" id="adminLoginBtn" class="btn-admin-primary" style="width:100%; padding:14px; border-radius:12px; border:none; background:linear-gradient(180deg, #7a1f2b, var(--brand, #6b0015)); color:#fff; font-weight:700; font-size:14px; letter-spacing:0.03em; text-transform:uppercase; cursor:pointer;">Log In</button>
+      <p id="adminLoginMsg" style="margin:10px 0 0; font-size:13px; color:#ff8a80; min-height:16px;"></p>
+    </form>
+  </div>
+</div>
+<div class="admin-shell">
+
+
+  <button class="admin-logout-btn" type="button" id="adminLogoutBtn">Log Out</button>
+  <button class="back-btn" onclick="window.location.href='admin-products.html'">
+    ← Back to Manage
+  </button>
+
+  <span class="admin-brand">ICCHA Admin</span>
+  <h1>Edit Product</h1>
+
+  <div class="admin-card">
+    <form id="editForm">
+      <input type="text" id="productName" placeholder="Product Name" required />
+      <input type="text" id="brand" placeholder="Brand" />
+      <input type="number" id="mrp" placeholder="MRP (Original Price)" />
+      <input type="number" id="offerPrice" placeholder="Offer Price" />
+      <input type="number" id="stock" placeholder="Stock Quantity (leave blank to not track)" min="0" />
+
+      <div class="custom-select" data-for="category">
+        <button type="button" class="custom-select-trigger">
+          <span class="custom-select-value">Select Category</span>
+          <svg class="custom-select-caret" width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="custom-select-menu"></div>
+      </div>
+      <select id="category">
+        <option value="">Select Category</option>
+        <optgroup label="Clothes">
+          <option value="Sarees">Sarees</option>
+          <option value="Kurtis">Kurtis</option>
+          <option value="Co-ord Sets">Co-ord Sets</option>
+          <option value="Dresses">Dresses</option>
+          <option value="Denim">Denim</option>
+          <option value="Shirts">Shirts</option>
+          <option value="Pants">Pants</option>
+          <option value="Kids Ethnic Wear">Kids Ethnic Wear</option>
+          <option value="Kids Western Wear">Kids Western Wear</option>
+          <option value="Kids Party Wear">Kids Party Wear</option>
+        </optgroup>
+        <optgroup label="Accessories">
+          <option value="Bags">Bags</option>
+          <option value="Jewelry">Jewelry</option>
+          <option value="Belts">Belts</option>
+          <option value="Scarves">Scarves</option>
+          <option value="Watches">Watches</option>
+        </optgroup>
+        <optgroup label="Fragrances">
+          <option value="Perfumes">Perfumes</option>
+          <option value="Deodorants">Deodorants</option>
+          <option value="Attars">Attars</option>
+        </optgroup>
+        <optgroup label="Footwear">
+          <option value="Heels">Heels</option>
+          <option value="Flats">Flats</option>
+          <option value="Sneakers">Sneakers</option>
+          <option value="Sandals">Sandals</option>
+          <option value="Kids Footwear">Kids Footwear</option>
+        </optgroup>
+      </select>
+
+      <div class="custom-select" data-for="gender">
+        <button type="button" class="custom-select-trigger">
+          <span class="custom-select-value">Select Gender</span>
+          <svg class="custom-select-caret" width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="custom-select-menu"></div>
+      </div>
+      <select id="gender">
+        <option value="">Select Gender</option>
+        <option value="Men">Men</option>
+        <option value="Women">Women</option>
+        <option value="Kids">Kids</option>
+        <option value="Boys">Boys</option>
+        <option value="Girls">Girls</option>
+        <option value="Unisex">Unisex</option>
+      </select>
+
+      <input type="text" id="colors" placeholder="Colors" />
+      <textarea id="details" placeholder="Product Details"></textarea>
+      <textarea id="shortDescription" placeholder="Short Description"></textarea>
+
+      <button type="submit" class="update-btn">
+        Update Product
+      </button>
+    </form>
+  </div>
+
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/admin-ui.js"></script>
+<script src="js/admin-auth.js"></script>
+<script>
+  const API = typeof API_BASE !== "undefined" ? API_BASE : ""; // real backend, from config.js
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const productId = urlParams.get("id");
+
+  let currentProduct = null;
+
+  async function loadProduct() {
+    if (!productId) {
+      alert("No product ID provided.");
+      return;
+    }
+
+    const res = await fetch(API + "/api/products");
+    const products = await res.json();
+
+    currentProduct = products.find(p => p.id === productId);
+
+    if (!currentProduct) {
+      alert("Product not found.");
+      return;
+    }
+
+    // Fill form
+    document.getElementById("productName").value = currentProduct.name || "";
+    document.getElementById("brand").value = currentProduct.brand || "";
+    document.getElementById("mrp").value = currentProduct.mrp || "";
+    document.getElementById("offerPrice").value = currentProduct.offerPrice || "";
+    document.getElementById("stock").value = currentProduct.stock === null || currentProduct.stock === undefined ? "" : currentProduct.stock;
+    document.getElementById("category").value = currentProduct.category || "";
+    document.getElementById("gender").value = currentProduct.gender || "";
+    document.getElementById("colors").value = currentProduct.colors || "";
+    document.getElementById("details").value = currentProduct.details || "";
+    document.getElementById("shortDescription").value = currentProduct.shortDescription || "";
+
+    if (window.ICCHA_ADMIN_UI) {
+      window.ICCHA_ADMIN_UI.refresh("category");
+      window.ICCHA_ADMIN_UI.refresh("gender");
+    }
+  }
+
+  document.getElementById("editForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const updatedProduct = {
+      name: document.getElementById("productName").value,
+      brand: document.getElementById("brand").value,
+      mrp: document.getElementById("mrp").value,
+      offerPrice: document.getElementById("offerPrice").value,
+      stock: document.getElementById("stock").value,
+      category: document.getElementById("category").value,
+      gender: document.getElementById("gender").value,
+      colors: document.getElementById("colors").value,
+      details: document.getElementById("details").value,
+      shortDescription: document.getElementById("shortDescription").value
+    };
+
+    await fetch(API + "/api/products/" + productId, {
+      method: "PUT",
+      headers: Object.assign(
+        { "Content-Type": "application/json" },
+        adminAuthHeader()
+      ),
+      body: JSON.stringify(updatedProduct)
+    });
+
+    alert("Product updated successfully!");
+
+    window.location.href = "admin-products.html";
+  });
+
+  requireAdminLogin(loadProduct);
+</script>
+
+</body>
+</html>
